@@ -1,0 +1,279 @@
+<html>
+    <head>
+        <title>Snake</title>
+        <style>
+            canvas{
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Snake</h1>
+        <h2>Score: <span id='score'/></h2>
+        <canvas id="TheCanvas" width="1000" height="400" tabindex="0"/>
+        <script>
+
+            window.onload = function(){
+                var canvas = document.getElementById("TheCanvas");
+                
+                var ctx = canvas.getContext("2d");
+
+                const wid=20;
+                const hei=20;
+
+                var Player={
+                    x:0,
+                    y:0,
+                    w:wid,
+                    h:hei,
+                    s:0,
+                    direction:1
+                }
+
+                const OGPlayer={
+                    x:0,
+                    y:0,
+                    w:wid,
+                    h:hei,
+                    s:0,
+                    direction: 1
+                }
+
+                var body = [];
+
+                function sleep(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
+
+                function getRandomIntInclusive(min, max) {
+                    min = Math.ceil(min);
+                    max = Math.floor(max);
+                    return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+                }
+
+                var Food = {
+                    x:(getRandomIntInclusive(0,((1000/wid)-1))*wid),
+                    y:(getRandomIntInclusive(0,((400/hei)-1))*hei),
+                    w:wid,
+                    h:hei,
+                }
+
+                canvas.focus();
+
+                canvas.addEventListener("keydown", function(event){
+                    if(event.keyCode == 87 || event.keyCode == 104 || event.keyCode == 38){
+                        if(!(Player.s>0 && Player.direction==2)){
+                            sleep(50).then(()=>{
+                                Player.direction = 4;//Up
+                            })
+                        }
+                    }
+                    else if(event.keyCode == 83 || event.keyCode == 98 || event.keyCode == 40){
+                        if(!(Player.s>0 && Player.direction==4)){
+                            sleep(50).then(()=>{
+                                Player.direction = 2;//Down
+                            })
+                        }
+                    }
+                    else if(event.keyCode == 65 || event.keyCode == 100 || event.keyCode == 37){
+                        if(!(Player.s>0 && Player.direction==1)){
+                            sleep(50).then(()=>{
+                                Player.direction = 3;//Left
+                            })
+                        }
+                    }
+                    else if(event.keyCode == 68 || event.keyCode == 102 || event.keyCode == 39){
+                        if(!(Player.s>0 && Player.direction==3)){
+                            sleep(50).then(()=>{
+                                Player.direction = 1;//Right
+                            })
+                        }
+                    }
+                    console.clear();
+                    console.log(body);
+                });
+                
+
+                var reset = function(){
+                    alert("Ha perdido");
+                    ctx.clearRect(0,0,1000,400);
+                    Player.x=OGPlayer.x;
+                    Player.y=OGPlayer.y;
+                    Player.s=OGPlayer.s;
+                    Player.direction=OGPlayer.direction;
+                    body.length=0;
+                    frame();
+                };
+
+                var update = function(){
+                    document.getElementById('score').innerHTML=Player.s;
+                    switch(Player.direction){
+                        case (1)://Right
+                            Player.x += Player.w;
+                            break;
+                        case(2)://Down
+                            Player.y += Player.h;
+                            break;
+                        case(3)://Left
+                            Player.x -= Player.w;
+                            break;
+                        default://Up
+                            Player.y -= Player.h;
+
+                    }
+
+                    if(Player.x>1000){
+                        Player.x=0;
+                    }
+                    if(Player.x<-wid){
+                        Player.x=(1000-wid);
+                    }
+                    if(Player.y>400){
+                        Player.y=0;
+                    }
+                    if(Player.y<-hei){
+                        Player.y=(400-hei);
+                    }
+
+                    if(Player.x==Food.x && Player.y==Food.y){
+                        Player.s++;
+                        body.push(
+                            {
+                                x:20,
+                                y:20,
+                                w:wid,
+                                h:hei,
+                                direction: null,
+                                prev_dir: null
+                            }); 
+                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+
+                        if(Food.x == Player.x && Food.y == Player.y){
+                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+                        }
+                        for (x=0;x<Player.s;x++){
+                            if(Food.x==body[x].x && Food.y==body[x].y){
+                                Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                                Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+                            }
+                        }
+                    }
+
+                };
+
+                var draw = function(){
+                    ctx.clearRect(0,0,1000,400);
+                    ctx.fillStyle = "rgb(200,0,100)";
+                    if(Player.x>=1000){
+                        Player.x=0;
+                    }
+                    if(Player.x<=-wid){
+                        Player.x=(1000-wid);
+                    }
+                    if(Player.y>=400){
+                        Player.y=0;
+                    }
+                    if(Player.y<=-hei){
+                        Player.y=(400-hei);
+                    }
+                    ctx.fillRect(Player.x, Player.y, Player.w, Player.h);
+                    if(Player.s>0){
+                        var x = 0;
+                        while(x < Player.s){
+                            if(x==0){
+                                body[x].prev_dir = body[x].direction;
+                                body[x].direction=Player.direction;
+
+                                switch(body[x].direction){
+                                case(1):
+                                    body[x].x = (Player.x - wid);
+                                    body[x].y = Player.y;
+                                    break;
+                                case(2):
+                                    body[x].x = Player.x;
+                                    body[x].y = (Player.y - hei);
+                                    break;
+                                case(3):
+                                    body[x].x = (Player.x + wid);
+                                    body[x].y = Player.y;
+                                    break;
+                                default:
+                                    body[x].x = Player.x;
+                                    body[x].y = (Player.y + hei);
+                                }
+                            }
+                            if(x!=0){
+
+                                body[x].prev_dir = body[x].direction;
+                                body[x].direction = body[(x-1)].prev_dir;
+
+                                switch(body[x].direction){
+                                case(1):
+                                    body[x].x = (body[x-1].x - wid);
+                                    body[x].y = body[x-1].y;
+                                    break;
+                                case(2):
+                                    body[x].x = body[x-1].x;
+                                    body[x].y = (body[x-1].y - hei);
+                                    break;
+                                case(3):
+                                    body[x].x = (body[x-1].x + wid);
+                                    body[x].y = body[x-1].y;
+                                    break;
+                                default:
+                                    body[x].x = body[x-1].x;
+                                    body[x].y = (body[x-1].y + hei);
+                                }
+
+                            }
+
+                            if(Player.x!=0 || Player.x!=(1000-Player.w) || Player.y!=0 || Player.y!=(400-Player.h)){
+                                if(body[x].x>=1000){
+                                    body[x].x=0;
+                                }
+                                
+                                if(body[x].x<=-wid){ 
+                                    body[x].x=(1000-wid);
+                                }
+                                
+                                if(body[x].y>=400){
+                                    body[x].y=0;
+                                }
+                                
+                                if(body[x].y<=-hei){
+                                    body[x].y=(400-hei);
+                                }
+                            }
+
+                            if(Player.s>4){
+                                if(body[x].x==Player.x && body[x].y==Player.y){
+                                reset();
+                                }
+                            }
+
+                            ctx.fillRect(body[x].x, body[x].y, body[x].w, body[x].h);
+                            x++;
+
+
+                        }
+                    }
+                    ctx.fillRect(Food.x, Food.y, Food.w, Food.h);
+                };
+
+
+                var frame = function(){
+                    update();
+                    draw();
+                    sleep(50).then(()=>{
+                        window.requestAnimationFrame(frame);
+                    });
+                };
+
+                frame();
+                };
+
+        </script>
+    </body>
+</html>
