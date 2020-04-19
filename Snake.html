@@ -89,8 +89,6 @@
                             })
                         }
                     }
-                    console.clear();
-                    console.log(body);
                 });
                 
 
@@ -105,8 +103,47 @@
                     frame();
                 };
 
+                var checkEatFood = function(){
+                    if(Player.x==Food.x && Player.y==Food.y){
+                        Player.s++;
+                        body.push(
+                            {
+                                x:20,
+                                y:20,
+                                w:wid,
+                                h:hei,
+                                direction: null,
+                                prev_dir: null
+                            }); 
+                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+                            console.log(Food.x);
+                            console.log(Food.y);  
+                        if(Food.x == Player.x && Food.y == Player.y){
+                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+                            console.log(Food.x);
+                            console.log(Food.y); 
+                        }
+                        for (x=0;x<Player.s;x++){
+                            if(Food.x==body[x].x && Food.y==body[x].y){
+                                Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
+                                Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
+                                console.log(Food.x);
+                                console.log(Food.y); 
+                            }
+                        }
+                    }
+                }
+
                 var update = function(){
+
+                    checkEatFood();
+
                     document.getElementById('score').innerHTML=Player.s;
+
+                    checkEatFood();
+
                     switch(Player.direction){
                         case (1)://Right
                             Player.x += Player.w;
@@ -122,6 +159,8 @@
 
                     }
 
+                    checkEatFood();
+
                     if(Player.x>1000){
                         Player.x=0;
                     }
@@ -134,32 +173,8 @@
                     if(Player.y<-hei){
                         Player.y=(400-hei);
                     }
-
-                    if(Player.x==Food.x && Player.y==Food.y){
-                        Player.s++;
-                        body.push(
-                            {
-                                x:20,
-                                y:20,
-                                w:wid,
-                                h:hei,
-                                direction: null,
-                                prev_dir: null
-                            }); 
-                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
-                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
-
-                        if(Food.x == Player.x && Food.y == Player.y){
-                            Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
-                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
-                        }
-                        for (x=0;x<Player.s;x++){
-                            if(Food.x==body[x].x && Food.y==body[x].y){
-                                Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
-                                Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
-                            }
-                        }
-                    }
+                    
+                    checkEatFood();
 
                 };
 
