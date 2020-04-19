@@ -22,7 +22,7 @@
                 const hei=20;
 
                 var Player={
-                    x:0,
+                    x:140,
                     y:0,
                     w:wid,
                     h:hei,
@@ -31,7 +31,7 @@
                 }
 
                 const OGPlayer={
-                    x:0,
+                    x:140,
                     y:0,
                     w:wid,
                     h:hei,
@@ -119,7 +119,7 @@
                             Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);  
                         if(Food.x == Player.x && Food.y == Player.y){
                             Food.x=(getRandomIntInclusive(0,((1000/wid)-1))*wid);
-                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei); 
+                            Food.y=(getRandomIntInclusive(0,((400/hei)-1))*hei);
                         }
                         for (x=0;x<Player.s;x++){
                             if(Food.x==body[x].x && Food.y==body[x].y){
